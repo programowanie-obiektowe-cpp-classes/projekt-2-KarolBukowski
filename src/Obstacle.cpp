@@ -1,4 +1,5 @@
 #include "Obstacle.hpp"
+#include "Block.hpp"
 
 std::vector< std::vector< int > > Obstacle::grid = {
     {0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0},
@@ -18,14 +19,14 @@ std::vector< std::vector< int > > Obstacle::grid = {
 Obstacle::Obstacle(Vector2 position) : position{position}
 {
 
-    for (unsigned int row = 0; row < grid.size(); row++)
+    for (int row = 0; row < grid.size(); row++)
     {
-        for (unsigned int column = 0; column < grid[0].size(); column++)
+        for (int column = 0; column < grid[0].size(); column++)
         {
             if (grid[row][column] == 1)
             {
-                float pos_x = position.x + column * 3;
-                float pos_y = position.y + row * 3;
+                float pos_x = position.x + column * Block::getBlockSizePixels();
+                float pos_y = position.y + row * Block::getBlockSizePixels();
                 blocks.emplace_back(Block({pos_x, pos_y}));
             }
         }
@@ -38,4 +39,14 @@ void Obstacle::Draw()
     {
         block.Draw();
     }
+}
+
+std::vector< Block >& Obstacle::getBlocks()
+{
+    return blocks;
+}
+
+std::vector< std::vector< int > > Obstacle::getGrid()
+{
+    return grid;
 }

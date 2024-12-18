@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "global.h"
 #include <iostream>
 #include <raylib.h>
 #include <string>
@@ -12,17 +13,17 @@ std::string FromatWithLeadingZeros(int number, int width)
 
 int main()
 {
-    Color grey         = {29, 29, 27, 255};
-    Color yellow       = {243, 216, 63, 255};
-    int   offset       = 50;
-    int   windowWidth  = 750;
-    int   windowHeight = 700;
 
-    InitWindow(windowWidth + offset, windowHeight + 2 * offset, "C++ Space Invaders");
+    int windowWidth  = 750;
+    int windowHeight = 700;
+
+    InitWindow(windowWidth + 2 * WINDOW_OFFSET_SIDE__,
+               windowHeight + WINDOW_OFFSET_BOT__ + WINDOW_OFFSET_TOP__,
+               "C++ Space Invaders");
     InitAudioDevice();
 
-    Font      font            = LoadFontEx("Font/monogram.ttf", 64, 0, 0);
-    Texture2D spaceship_image = LoadTexture("Graphics/spaceship.png");
+    Font      font            = LoadFontEx("font/monogram.ttf", 64, 0, 0);
+    Texture2D spaceship_image = LoadTexture("graphics/spaceship.png");
 
     SetTargetFPS(60);
 
@@ -36,16 +37,16 @@ int main()
         game.Update();
 
         BeginDrawing();
-        ClearBackground(grey);
-        DrawRectangleRoundedLines({10, 10, 780, 780}, 0.18, 20, yellow);
-        DrawLineEx({25, 730}, {775, 730}, 3, yellow);
+        ClearBackground(GREY__);
+        DrawRectangleRoundedLines({10, 10, 780, 780}, 0.18, 20, YELLOW__);
+        DrawLineEx({25, 730}, {775, 730}, 3, YELLOW__);
         if (game.run)
         {
-            DrawTextEx(font, "LEVEL 01", {570, 740}, 34, 2, yellow);
+            DrawTextEx(font, "LEVEL 01", {570, 740}, 34, 2, YELLOW__);
         }
         else
         {
-            DrawTextEx(font, "GAME OVER", {570, 740}, 34, 2, yellow);
+            DrawTextEx(font, "GAME OVER", {570, 740}, 34, 2, YELLOW__);
         }
         for (int i = 0; i < game.lives; i++)
         {
@@ -53,11 +54,11 @@ int main()
             DrawTextureV(spaceship_image, {pos_x, 745}, WHITE);
         }
 
-        DrawTextEx(font, "SCORE", {50, 15}, 34, 2, yellow);
-        DrawTextEx(font, FromatWithLeadingZeros(game.score, 5).c_str(), {50, 40}, 34, 2, yellow);
+        DrawTextEx(font, "SCORE", {50, 15}, 34, 2, YELLOW__);
+        DrawTextEx(font, FromatWithLeadingZeros(game.score, 5).c_str(), {50, 40}, 34, 2, YELLOW__);
 
-        DrawTextEx(font, "HIGHSCORE", {570, 15}, 34, 2, yellow);
-        DrawTextEx(font, FromatWithLeadingZeros(game.highscore, 5).c_str(), {655, 40}, 34, 2, yellow);
+        DrawTextEx(font, "HIGHSCORE", {570, 15}, 34, 2, YELLOW__);
+        DrawTextEx(font, FromatWithLeadingZeros(game.highscore, 5).c_str(), {655, 40}, 34, 2, YELLOW__);
 
         game.Draw();
 

@@ -4,17 +4,22 @@
 
 void Game::DeleteInactiveLasers()
 {
-    for (auto it = spaceship.lasers.begin(); it != spaceship.lasers.end();)
+    auto& spaceship_lasers = spaceship.getLasers();
+
+    for (auto it = spaceship_lasers.begin(); it != spaceship_lasers.end();)
     {
         if (!it->active)
         {
-            it = spaceship.lasers.erase(it);
+            it = spaceship_lasers.erase(it);
         }
         else
         {
             ++it;
         }
     }
+
+    auto& alien_lasers = Alien::getLasers();
+
     for (auto it = alien_lasers.begin(); it != alien_lasers.end();)
     {
         if (!it->active)
@@ -28,21 +33,20 @@ void Game::DeleteInactiveLasers()
     }
 }
 
-std::vector< Obstacle > Game::CreateObstacles()
+void Game::CreateObstacles()
 {
-    int   obstacle_width = Obstacle::grid[0].size() * 3;
+    int   obstacle_width = Obstacle::getGrid()[0].size() * Block::getBlockSizePixels();
     float gap            = (GetScreenWidth() - (4 * obstacle_width)) / 5;
 
-    for (unsigned int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
         float offset_x = (i + 1) * gap + i * obstacle_width;
         float offset_y = GetScreenHeight() - 200;
         obstacles.emplace_back(Obstacle({offset_x, offset_y}));
     }
-    return obstacles;
 }
 
-std::vector< Alien > Game::CreateAliens()
+void Game::CreateAliens()
 {
     for (int row = 0; row < 5; row++)
     {
@@ -67,64 +71,60 @@ std::vector< Alien > Game::CreateAliens()
             aliens.emplace_back(Alien(alien_type, {pos_x, pos_y}));
         }
     }
-    return aliens;
 }
 
 void Game::MoveAliens()
 {
+
+    bool change_direction = false;
     for (auto& alien : aliens)
     {
-        if (alien.position.x > GetScreenWidth() - alien.alien_images[alien.GetType() - 1].width - 25)
+        float alien_position_x = alien.getPosition().x;
+        if (alien_position_x >
+                GetScreenWidth() - alien.alien_images[alien.getType() - 1].width - WINDOW_OFFSET_SIDE__ ||
+            alien_position_x < WINDOW_OFFSET_SIDE__)
         {
-            aliens_direction = -1;
-            MoveDownAliens();
+            change_direction = true;
+            Alien::ChangeDirection();
+            break;
         }
-        else if (alien.position.x < 25)
-        {
-            aliens_direction = 1;
-            MoveDownAliens();
-        }
-
-        alien.Update(aliens_direction);
     }
-}
 
-void Game::MoveDownAliens()
-{
     for (auto& alien : aliens)
     {
-        alien.position.y += 4;
+        alien.MoveSideways();
+        if (change_direction)
+        {
+            alien.MoveDownward();
+        }
     }
 }
 
 void Game::AlienShootLaser()
 {
-    if (GetTime() - time_last_alien_fired >= 0.35 && !aliens.empty())
+    for (auto& alien : aliens)
     {
-        int    random_index = GetRandomValue(0, aliens.size() - 1);
-        Alien& alien        = aliens[random_index];
-        float  pos_x        = alien.position.x + alien.alien_images[alien.GetType() - 1].width / 2;
-        float  pos_y        = alien.position.y + alien.alien_images[alien.GetType() - 1].height;
-        alien_lasers.push_back(Laser({pos_x, pos_y}, 6));
-        time_last_alien_fired = GetTime();
+        alien.FireLaser();
     }
 }
 
 void Game::CheckForCollisions()
 {
-    for (auto& laser : spaceship.lasers)
+    auto& spaceship_lasers = spaceship.getLasers();
+    auto& alien_lasers     = Alien::getLasers();
+    for (auto& laser : spaceship_lasers)
     {
 
         for (auto it = aliens.begin(); it != aliens.end();)
         {
-            if (CheckCollisionRecs(it->GetRect(), laser.GetRect()))
+            if (CheckCollisionRecs(it->getRect(), laser.getRect()))
             {
                 PlaySound(explosion_sound);
-                if (it->GetType() == 1)
+                if (it->getType() == 1)
                 {
                     score += 100;
                 }
-                else if (it->GetType() == 2)
+                else if (it->getType() == 2)
                 {
                     score += 200;
                 }
@@ -144,11 +144,12 @@ void Game::CheckForCollisions()
         }
         for (auto& obstacle : obstacles)
         {
-            for (auto it = obstacle.blocks.begin(); it != obstacle.blocks.end();)
+            auto& blocks = obstacle.getBlocks();
+            for (auto it = blocks.begin(); it != blocks.end();)
             {
-                if (CheckCollisionRecs(it->GetRect(), laser.GetRect()))
+                if (CheckCollisionRecs(it->getRect(), laser.getRect()))
                 {
-                    it           = obstacle.blocks.erase(it);
+                    it           = blocks.erase(it);
                     laser.active = false;
                 }
                 else
@@ -157,7 +158,7 @@ void Game::CheckForCollisions()
                 }
             }
         }
-        if (CheckCollisionRecs(mysteryship.GetRect(), laser.GetRect()))
+        if (CheckCollisionRecs(mysteryship.getRect(), laser.getRect()))
         {
             PlaySound(explosion_sound);
             score += 500;
@@ -169,7 +170,7 @@ void Game::CheckForCollisions()
 
     for (auto& laser : alien_lasers)
     {
-        if (CheckCollisionRecs(spaceship.GetRect(), laser.GetRect()))
+        if (CheckCollisionRecs(spaceship.getRect(), laser.getRect()))
         {
             PlaySound(explosion_sound);
             lives--;
@@ -177,11 +178,13 @@ void Game::CheckForCollisions()
         }
         for (auto& obstacle : obstacles)
         {
-            for (auto it = obstacle.blocks.begin(); it != obstacle.blocks.end();)
+            auto& blocks = obstacle.getBlocks();
+
+            for (auto it = blocks.begin(); it != blocks.end();)
             {
-                if (CheckCollisionRecs(it->GetRect(), laser.GetRect()))
+                if (CheckCollisionRecs(it->getRect(), laser.getRect()))
                 {
-                    it           = obstacle.blocks.erase(it);
+                    it           = blocks.erase(it);
                     laser.active = false;
                 }
                 else
@@ -194,17 +197,19 @@ void Game::CheckForCollisions()
 
     for (auto& alien : aliens)
     {
-        if (CheckCollisionRecs(spaceship.GetRect(), alien.GetRect()))
+        if (CheckCollisionRecs(spaceship.getRect(), alien.getRect()))
         {
             GameOver();
         }
         for (auto& obstacle : obstacles)
         {
-            for (auto it = obstacle.blocks.begin(); it != obstacle.blocks.end();)
+            auto& blocks = obstacle.getBlocks();
+
+            for (auto it = blocks.begin(); it != blocks.end();)
             {
-                if (CheckCollisionRecs(it->GetRect(), alien.GetRect()))
+                if (CheckCollisionRecs(it->getRect(), alien.getRect()))
                 {
-                    it = obstacle.blocks.erase(it);
+                    it = blocks.erase(it);
                 }
                 else
                 {
@@ -224,22 +229,18 @@ void Game::Reset()
 {
     spaceship.Reset();
     aliens.clear();
-    alien_lasers.clear();
+    Alien::getLasers().clear();
     obstacles.clear();
 }
 
 void Game::InitGame()
 {
-    obstacles                     = CreateObstacles();
-    aliens                        = CreateAliens();
-    aliens_direction              = 1;
-    time_last_alien_fired         = 0.0;
-    time_last_mysteryship_spawned = 0.0;
-    mysteryship_spawn_interval    = GetRandomValue(10, 20);
-    lives                         = 3;
-    run                           = true;
-    score                         = 0;
-    highscore                     = LoadHighscoreFromFile();
+    CreateObstacles();
+    CreateAliens();
+    lives     = 3;
+    run       = true;
+    score     = 0;
+    highscore = LoadHighscoreFromFile();
 }
 
 void Game::CheckForHighscore()
@@ -283,8 +284,8 @@ int Game::LoadHighscoreFromFile()
 
 Game::Game()
 {
-    music           = LoadMusicStream("Sounds/music.ogg");
-    explosion_sound = LoadSound("Sounds/explosion.ogg");
+    music           = LoadMusicStream("sounds/music.ogg");
+    explosion_sound = LoadSound("sounds/explosion.ogg");
     PlayMusicStream(music);
     InitGame();
 }
@@ -300,7 +301,7 @@ void Game::Draw()
 {
     spaceship.Draw();
 
-    for (auto& laser : spaceship.lasers)
+    for (auto& laser : spaceship.getLasers())
     {
         laser.Draw();
     }
@@ -315,7 +316,7 @@ void Game::Draw()
         alien.Draw();
     }
 
-    for (auto& laser : alien_lasers)
+    for (auto& laser : Alien::getLasers())
     {
         laser.Draw();
     }
@@ -328,7 +329,7 @@ void Game::Update()
     if (run)
     {
 
-        for (auto& laser : spaceship.lasers)
+        for (auto& laser : spaceship.getLasers())
         {
             laser.Update();
         }
@@ -337,19 +338,12 @@ void Game::Update()
 
         AlienShootLaser();
 
-        for (auto& laser : alien_lasers)
+        for (auto& laser : Alien::getLasers())
         {
             laser.Update();
         }
 
         DeleteInactiveLasers();
-
-        if (GetTime() - time_last_mysteryship_spawned > mysteryship_spawn_interval)
-        {
-            mysteryship.Spawn();
-            time_last_mysteryship_spawned = GetTime();
-            mysteryship_spawn_interval    = GetRandomValue(10, 20);
-        }
 
         mysteryship.Update();
 

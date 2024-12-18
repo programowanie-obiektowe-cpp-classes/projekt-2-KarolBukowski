@@ -5,10 +5,15 @@ Block::Block(Vector2 position) : position{position}
 
 void Block::Draw()
 {
-    DrawRectangle(position.x, position.y, 3, 3, {243, 216, 63, 255});
+    DrawRectangle(position.x, position.y, block_size_pixels, block_size_pixels, YELLOW__);
 }
 
-Rectangle Block::GetRect()
+Rectangle Block::getRect()
 {
-    return {position.x, position.y, 3, 3};
+    return {position.x, position.y, block_size_pixels, block_size_pixels};
+}
+
+int Block::getBlockSizePixels()
+{
+    return block_size_pixels;
 }

@@ -1,9 +1,12 @@
 #include "Mysteryship.hpp"
 
-Mysteryship::Mysteryship()
+Mysteryship::Mysteryship() : active{false}
 {
-    image  = LoadTexture("Graphics/mystery.png");
-    active = false;
+    image                         = LoadTexture("graphics/mystery.png");
+    time_last_mysteryship_spawned = GetTime();
+    mysteryship_spawn_interval    = GetRandomValue(10, 20);
+
+    speed = 3;
 }
 
 Mysteryship::~Mysteryship()
@@ -15,11 +18,17 @@ void Mysteryship::Update()
 {
     if (active)
     {
-        position.x += speed;
-        if (position.x > GetScreenWidth() - image.width - 25 || position.x < 25)
+        position.x += direction * speed;
+        if (position.x > GetScreenWidth() - image.width - WINDOW_OFFSET_SIDE__ || position.x < WINDOW_OFFSET_SIDE__)
         {
             active = false;
         }
+    }
+    else if (GetTime() - time_last_mysteryship_spawned > mysteryship_spawn_interval)
+    {
+        Spawn();
+        time_last_mysteryship_spawned = GetTime();
+        mysteryship_spawn_interval    = GetRandomValue(10, 20);
     }
 }
 
@@ -37,18 +46,18 @@ void Mysteryship::Spawn()
     int side   = GetRandomValue(0, 1);
     if (side == 0)
     {
-        position.x = 25;
-        speed      = 3;
+        position.x = WINDOW_OFFSET_SIDE__;
+        direction  = 1;
     }
     else
     {
-        position.y = GetScreenWidth() - image.width - 25;
-        speed      = -3;
+        position.x = GetScreenWidth() - image.width - WINDOW_OFFSET_SIDE__;
+        direction  = -1;
     }
     active = true;
 }
 
-Rectangle Mysteryship::GetRect()
+Rectangle Mysteryship::getRect()
 {
     if (active)
     {
