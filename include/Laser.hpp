@@ -7,6 +7,7 @@ class Laser
 private:
     Vector2 position;
     int     speed;
+    bool    active;
 
     // Static constants
     constexpr static int laser_width_pixels  = 3;
@@ -15,10 +16,10 @@ private:
 public:
     Laser(Vector2 position, int speed);
 
-    bool active;
-
     void      Draw();
     void      Update();
+    void      setStatus(bool status);
+    bool      getStatus();
     Rectangle getRect();
 
     static int getLaserWidthPixels();

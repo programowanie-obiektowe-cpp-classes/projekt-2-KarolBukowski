@@ -8,7 +8,7 @@ void Game::DeleteInactiveLasers()
 
     for (auto it = spaceship_lasers.begin(); it != spaceship_lasers.end();)
     {
-        if (!it->active)
+        if (!it->getStatus())
         {
             it = spaceship_lasers.erase(it);
         }
@@ -22,7 +22,7 @@ void Game::DeleteInactiveLasers()
 
     for (auto it = alien_lasers.begin(); it != alien_lasers.end();)
     {
-        if (!it->active)
+        if (!it->getStatus())
         {
             it = alien_lasers.erase(it);
         }
@@ -134,8 +134,8 @@ void Game::CheckForCollisions()
                 }
                 CheckForHighscore();
 
-                it           = aliens.erase(it);
-                laser.active = false;
+                it = aliens.erase(it);
+                laser.setStatus(false);
             }
             else
             {
@@ -149,8 +149,8 @@ void Game::CheckForCollisions()
             {
                 if (CheckCollisionRecs(it->getRect(), laser.getRect()))
                 {
-                    it           = blocks.erase(it);
-                    laser.active = false;
+                    it = blocks.erase(it);
+                    laser.setStatus(false);
                 }
                 else
                 {
@@ -163,8 +163,8 @@ void Game::CheckForCollisions()
             PlaySound(explosion_sound);
             score += 500;
             CheckForHighscore();
-            mysteryship.active = false;
-            laser.active       = false;
+            mysteryship.setStatus(false);
+            laser.setStatus(false);
         }
     }
 
@@ -174,7 +174,7 @@ void Game::CheckForCollisions()
         {
             PlaySound(explosion_sound);
             lives--;
-            laser.active = false;
+            laser.setStatus(false);
         }
         for (auto& obstacle : obstacles)
         {
@@ -184,8 +184,8 @@ void Game::CheckForCollisions()
             {
                 if (CheckCollisionRecs(it->getRect(), laser.getRect()))
                 {
-                    it           = blocks.erase(it);
-                    laser.active = false;
+                    it = blocks.erase(it);
+                    laser.setStatus(false);
                 }
                 else
                 {
@@ -389,7 +389,7 @@ void Game::HandleInput()
         {
             spaceship.MoveRight();
         }
-        else if (IsKeyDown(KEY_SPACE))
+        if (IsKeyDown(KEY_SPACE))
         {
             spaceship.FireLaser();
         }
@@ -399,4 +399,29 @@ void Game::HandleInput()
         Reset();
         InitGame();
     }
+}
+
+bool Game::getStatus()
+{
+    return run;
+}
+
+int Game::getLives()
+{
+    return lives;
+}
+
+int Game::getLevel()
+{
+    return level;
+}
+
+int Game::getScore()
+{
+    return score;
+}
+
+int Game::getHighscore()
+{
+    return highscore;
 }

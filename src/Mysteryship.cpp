@@ -55,6 +55,16 @@ void Mysteryship::Spawn()
     active = true;
 }
 
+void Mysteryship::setStatus(bool status)
+{
+    active = status;
+}
+
+bool Mysteryship::getStatus()
+{
+    return active;
+}
+
 Rectangle Mysteryship::getRect()
 {
     if (active)

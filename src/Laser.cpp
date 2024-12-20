@@ -23,6 +23,16 @@ void Laser::Update()
     }
 }
 
+void Laser::setStatus(bool status)
+{
+    active = status;
+}
+
+bool Laser::getStatus()
+{
+    return active;
+}
+
 Rectangle Laser::getRect()
 {
     return {position.x, position.y, laser_width_pixels, laser_height_pixels};

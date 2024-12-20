@@ -23,6 +23,11 @@ public:
     Spaceship();
     ~Spaceship();
 
+    Spaceship(const Spaceship&)            = delete;
+    Spaceship& operator=(const Spaceship&) = delete;
+    Spaceship(Spaceship&&)                 = delete;
+    Spaceship& operator=(Spaceship&&)      = delete;
+
     void                  Draw();
     void                  MoveLeft();
     void                  MoveRight();

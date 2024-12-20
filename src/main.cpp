@@ -40,25 +40,26 @@ int main()
         ClearBackground(GREY__);
         DrawRectangleRoundedLines({10, 10, 780, 780}, 0.18, 20, YELLOW__);
         DrawLineEx({25, 730}, {775, 730}, 3, YELLOW__);
-        if (game.run)
+        if (game.getStatus())
         {
-            DrawTextEx(font, ("LEVEL " + FormatWithLeadingZeros(game.level, 2)).c_str(), {570, 740}, 34, 2, YELLOW__);
+            DrawTextEx(
+                font, ("LEVEL " + FormatWithLeadingZeros(game.getLevel(), 2)).c_str(), {570, 740}, 34, 2, YELLOW__);
         }
         else
         {
             DrawTextEx(font, "GAME OVER", {570, 740}, 34, 2, YELLOW__);
         }
-        for (int i = 0; i < game.lives; i++)
+        for (int i = 0; i < game.getLives(); i++)
         {
             float pos_x = 50 + 50 * i;
             DrawTextureV(spaceship_image, {pos_x, 745}, WHITE);
         }
 
         DrawTextEx(font, "SCORE", {50, 15}, 34, 2, YELLOW__);
-        DrawTextEx(font, FormatWithLeadingZeros(game.score, 5).c_str(), {50, 40}, 34, 2, YELLOW__);
+        DrawTextEx(font, FormatWithLeadingZeros(game.getScore(), 5).c_str(), {50, 40}, 34, 2, YELLOW__);
 
         DrawTextEx(font, "HIGHSCORE", {570, 15}, 34, 2, YELLOW__);
-        DrawTextEx(font, FormatWithLeadingZeros(game.highscore, 5).c_str(), {655, 40}, 34, 2, YELLOW__);
+        DrawTextEx(font, FormatWithLeadingZeros(game.getHighscore(), 5).c_str(), {655, 40}, 34, 2, YELLOW__);
 
         game.Draw();
 

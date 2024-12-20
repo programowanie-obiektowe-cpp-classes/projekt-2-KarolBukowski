@@ -17,6 +17,12 @@ private:
     Sound                   explosion_sound;
     DifficultyManager       difficulty;
 
+    bool run;
+    int  lives;
+    int  level;
+    int  score;
+    int  highscore;
+
     void DeleteInactiveLasers();
     void CreateObstacles();
     void CreateAliens();
@@ -35,12 +41,18 @@ public:
     Game();
     ~Game();
 
-    bool  run;
-    int   lives;
-    int   level;
-    int   score;
-    int   highscore;
+    Game(const Game&)            = delete;
+    Game& operator=(const Game&) = delete;
+    Game(Game&&)                 = delete;
+    Game& operator=(Game&&)      = delete;
+
     Music music;
+
+    bool getStatus();
+    int  getLives();
+    int  getLevel();
+    int  getScore();
+    int  getHighscore();
 
     void Draw();
     void Update();
