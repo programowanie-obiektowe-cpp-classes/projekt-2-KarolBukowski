@@ -10,9 +10,7 @@ private:
     double    time_last_mysteryship_spawned;
     int       mysteryship_spawn_interval;
     int       direction;
-
-    // Difficulty-dependent variables
-    int speed;
+    float     speed;
 
 public:
     Mysteryship();

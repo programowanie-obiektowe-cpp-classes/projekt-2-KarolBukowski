@@ -1,4 +1,5 @@
 #pragma once
+#include "DifficultyManager.hpp"
 #include "Laser.hpp"
 #include "global.h"
 #include <raylib.h>
@@ -14,9 +15,9 @@ private:
     std::vector< Laser > lasers;
 
     // Difficulty-dependent variables
-    int    speed;
-    int    laser_speed;
-    double laser_firing_rate;
+    static float  speed;
+    static float  laser_speed;
+    static double laser_firing_rate;
 
 public:
     Spaceship();
@@ -29,4 +30,5 @@ public:
     void                  Reset();
     Rectangle             getRect();
     std::vector< Laser >& getLasers();
+    static void           ApplyDifficulty(const DifficultyManager& difficulty);
 };

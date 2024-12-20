@@ -237,10 +237,25 @@ void Game::InitGame()
 {
     CreateObstacles();
     CreateAliens();
+    Alien::ApplyDifficulty(difficulty);
+    Spaceship::ApplyDifficulty(difficulty);
     lives     = 3;
+    level     = 1;
     run       = true;
     score     = 0;
     highscore = LoadHighscoreFromFile();
+}
+
+void Game::InitNextLevel()
+{
+    difficulty.IncreaseDifficulty();
+    Reset();
+    CreateObstacles();
+    CreateAliens();
+    Alien::ApplyDifficulty(difficulty);
+    Spaceship::ApplyDifficulty(difficulty);
+    level++;
+    lives++;
 }
 
 void Game::CheckForHighscore()
@@ -287,6 +302,7 @@ Game::Game()
     music           = LoadMusicStream("sounds/music.ogg");
     explosion_sound = LoadSound("sounds/explosion.ogg");
     PlayMusicStream(music);
+    Alien::LoadImages();
     InitGame();
 }
 
@@ -348,6 +364,12 @@ void Game::Update()
         mysteryship.Update();
 
         CheckForCollisions();
+
+        if (aliens.empty())
+        {
+            InitNextLevel();
+        }
+
         if (lives == 0)
         {
             GameOver();

@@ -1,5 +1,9 @@
 #include "Spaceship.hpp"
 
+float  Spaceship::speed             = 0.0f;
+float  Spaceship::laser_speed       = 0.0f;
+double Spaceship::laser_firing_rate = 0.0;
+
 Spaceship::Spaceship()
 {
     image          = LoadTexture("graphics/spaceship.png");
@@ -7,10 +11,6 @@ Spaceship::Spaceship()
     position.x     = (GetScreenWidth() - image.width) / 2;
     position.y     = GetScreenHeight() - image.height - 100;
     last_fire_time = 0.0;
-
-    speed             = 7;
-    laser_speed       = 6;
-    laser_firing_rate = 0.35;
 }
 
 Spaceship::~Spaceship()
@@ -68,4 +68,11 @@ void Spaceship::Reset()
     position.x = (GetScreenWidth() - image.width) / 2;
     position.y = GetScreenHeight() - image.height - WINDOW_OFFSET_BOT__;
     lasers.clear();
+}
+
+void Spaceship::ApplyDifficulty(const DifficultyManager& difficulty)
+{
+    speed             = difficulty.getSpaceshipSpeed();
+    laser_speed       = difficulty.getSpaceshipLaserSpeed();
+    laser_firing_rate = difficulty.getSpaceshipLaserFiringRate();
 }

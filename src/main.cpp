@@ -4,7 +4,7 @@
 #include <raylib.h>
 #include <string>
 
-std::string FromatWithLeadingZeros(int number, int width)
+std::string FormatWithLeadingZeros(int number, int width)
 {
     std::string score_text    = std::to_string(number);
     int         leading_zeros = width - score_text.length();
@@ -42,7 +42,7 @@ int main()
         DrawLineEx({25, 730}, {775, 730}, 3, YELLOW__);
         if (game.run)
         {
-            DrawTextEx(font, "LEVEL 01", {570, 740}, 34, 2, YELLOW__);
+            DrawTextEx(font, ("LEVEL " + FormatWithLeadingZeros(game.level, 2)).c_str(), {570, 740}, 34, 2, YELLOW__);
         }
         else
         {
@@ -55,10 +55,10 @@ int main()
         }
 
         DrawTextEx(font, "SCORE", {50, 15}, 34, 2, YELLOW__);
-        DrawTextEx(font, FromatWithLeadingZeros(game.score, 5).c_str(), {50, 40}, 34, 2, YELLOW__);
+        DrawTextEx(font, FormatWithLeadingZeros(game.score, 5).c_str(), {50, 40}, 34, 2, YELLOW__);
 
         DrawTextEx(font, "HIGHSCORE", {570, 15}, 34, 2, YELLOW__);
-        DrawTextEx(font, FromatWithLeadingZeros(game.highscore, 5).c_str(), {655, 40}, 34, 2, YELLOW__);
+        DrawTextEx(font, FormatWithLeadingZeros(game.highscore, 5).c_str(), {655, 40}, 34, 2, YELLOW__);
 
         game.Draw();
 

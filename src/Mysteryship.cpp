@@ -1,12 +1,10 @@
 #include "Mysteryship.hpp"
 
-Mysteryship::Mysteryship() : active{false}
+Mysteryship::Mysteryship() : active{false}, speed{2.5}
 {
     image                         = LoadTexture("graphics/mystery.png");
     time_last_mysteryship_spawned = GetTime();
     mysteryship_spawn_interval    = GetRandomValue(10, 20);
-
-    speed = 3;
 }
 
 Mysteryship::~Mysteryship()

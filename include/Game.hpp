@@ -1,5 +1,6 @@
 #pragma once
 #include "Alien.hpp"
+#include "DifficultyManager.hpp"
 #include "Laser.hpp"
 #include "Mysteryship.hpp"
 #include "Obstacle.hpp"
@@ -14,6 +15,7 @@ private:
     std::vector< Alien >    aliens;
     Mysteryship             mysteryship;
     Sound                   explosion_sound;
+    DifficultyManager       difficulty;
 
     void DeleteInactiveLasers();
     void CreateObstacles();
@@ -24,6 +26,7 @@ private:
     void GameOver();
     void Reset();
     void InitGame();
+    void InitNextLevel();
     void CheckForHighscore();
     void SaveHighscoreToFile(int highscore);
     int  LoadHighscoreFromFile();
@@ -34,6 +37,7 @@ public:
 
     bool  run;
     int   lives;
+    int   level;
     int   score;
     int   highscore;
     Music music;
